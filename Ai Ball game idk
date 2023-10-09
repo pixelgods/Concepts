@@ -1,0 +1,65 @@
+import pygame
+import sys
+
+# Initialisierung von Pygame
+pygame.init()
+
+# Fenstergröße
+WIDTH, HEIGHT = 800, 600
+
+# Farben
+WHITE = (255, 255, 255)
+
+# Initialisierung des Fensters
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Ball schießen")
+
+# Ball-Parameter
+ball_radius = 20
+ball_color = (255, 0, 0)
+ball_speed = 5
+
+# Ball-Koordinaten und Geschwindigkeit
+ball_x = WIDTH // 2
+ball_y = HEIGHT - ball_radius
+ball_velocity_x = 0
+ball_velocity_y = 0
+ball_shot = False
+
+# Schleife für das Spiel
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and not ball_shot:
+            # Wenn Mausklick und der Ball nicht bereits geschossen wurde
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            # Berechne die Richtung zum Mausklick
+            direction_x = mouse_x - ball_x
+            direction_y = mouse_y - ball_y
+            length = (direction_x ** 2 + direction_y ** 2) ** 0.5
+            ball_velocity_x = (direction_x / length) * ball_speed
+            ball_velocity_y = (direction_y / length) * ball_speed
+            ball_shot = True
+
+    # Ball-Bewegung
+    if ball_shot:
+        ball_x += ball_velocity_x
+        ball_y += ball_velocity_y
+
+    # Hintergrund löschen
+    screen.fill(WHITE)
+
+    # Ball zeichnen
+    pygame.draw.circle(screen, ball_color, (int(ball_x), int(ball_y)), ball_radius)
+
+    # Aktualisiere das Display
+    pygame.display.flip()
+
+    # Begrenze die Bildwiederholungsrate auf 60 FPS
+    pygame.time.Clock().tick(60)
+
+# Pygame beenden
+pygame.quit()
+sys.exit()
